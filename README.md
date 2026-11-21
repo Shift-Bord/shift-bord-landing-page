@@ -80,8 +80,6 @@ npm run dev
 
 - **Public Landing Page**: `http://localhost:3000`
 - **CPanel (Admin Dashboard)**: `http://localhost:3000/admin`
-  - Default User: `admin`
-  - Default Password: `shiftbord2026`
 
 ---
 
