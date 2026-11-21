@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/shiftbord';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://ahmedelgendyfci_db_user:4CyY4ekt3IylZtEj@shift-bord-requests.tbmdjui.mongodb.net/shiftbord?retryWrites=true&w=majority';
 
 async function connectDB() {
   try {
