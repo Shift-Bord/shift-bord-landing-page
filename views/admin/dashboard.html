@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Shift Bord | Control Panel (CPanel)</title>
+  
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,300..900;1,300..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet"/>
+  
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#b7c4ff",
+            "outline": "#8d90a2",
+            "primary-container": "#0052ff",
+            "surface-bright": "#353942",
+            "error-container": "#93000a",
+            "surface-tint": "#b7c4ff",
+            "surface-container-low": "#181c24",
+            "surface": "#0f131c",
+            "secondary-container": "#00eefc",
+            "surface-container-high": "#262a33",
+            "surface-container": "#1c2028",
+            "on-background": "#dfe2ee",
+            "surface-container-highest": "#31353e",
+            "on-surface": "#dfe2ee",
+            "surface-container-lowest": "#0a0e16",
+            "outline-variant": "#434656"
+          },
+          fontFamily: {
+            body: ["Hanken Grotesk"],
+            headline: ["Space Grotesk"],
+            mono: ["JetBrains Mono"]
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #0f131c; }
+    ::-webkit-scrollbar-thumb { background: #262a33; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #434656; }
+    .status-badge-new { background: rgba(0, 82, 255, 0.18); color: #b7c4ff; border: 1px solid rgba(0, 82, 255, 0.4); }
+    .status-badge-contacted { background: rgba(0, 238, 252, 0.15); color: #00eefc; border: 1px solid rgba(0, 238, 252, 0.35); }
+    .status-badge-in_progress { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.35); }
+    .status-badge-closed { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.35); }
+  </style>
+</head>
+<body class="bg-surface text-on-surface font-body min-h-screen flex flex-col selection:bg-primary-container selection:text-white">
+
+  <!-- ════ Top Navigation Bar ════ -->
+  <header class="sticky top-0 z-40 bg-surface/90 backdrop-blur-xl border-b border-outline-variant/30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      
+      <!-- Logo & System Tag -->
+      <div class="flex items-center gap-4">
+        <a href="/admin/dashboard" class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-primary-container flex items-center justify-center text-white font-bold font-headline shadow-[0_0_12px_rgba(0,82,255,0.4)]">
+            SB
+          </div>
+          <div>
+            <div class="font-headline font-bold text-base tracking-tight text-white flex items-center gap-1.5">
+              <span>SHIFT BORD</span>
+              <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-primary-container/20 text-primary uppercase">CPanel v1.0</span>
+            </div>
+          </div>
+        </a>
+
+        <div class="hidden md:flex items-center gap-2 pl-4 border-l border-outline-variant/30 text-xs font-mono text-outline">
+          <span class="w-2 h-2 rounded-full bg-secondary-container animate-pulse"></span>
+          <span>SYSTEM ACTIVE &bull; LIVE SYNC</span>
+        </div>
+      </div>
+
+      <!-- Action buttons -->
+      <div class="flex items-center gap-3">
+        <!-- Export Button -->
+        <a href="/admin/api/export" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container-high border border-outline-variant/30 text-xs font-mono text-on-surface hover:text-primary hover:border-primary/50 transition-all">
+          <span class="material-symbols-outlined text-[16px]">download</span>
+          <span class="hidden sm:inline">Export CSV</span>
+        </a>
+
+        <!-- Public Landing Page Link -->
+        <a href="/" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container-high border border-outline-variant/30 text-xs font-mono text-on-surface hover:text-secondary-container hover:border-secondary-container/50 transition-all">
+          <span class="material-symbols-outlined text-[16px]">open_in_new</span>
+          <span class="hidden sm:inline">Live Site</span>
+        </a>
+
+        <!-- Logout Button -->
+        <button id="logout-btn" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-error-container/20 border border-error-container/40 text-xs font-mono text-red-300 hover:bg-error-container/30 transition-all">
+          <span class="material-symbols-outlined text-[16px]">logout</span>
+          <span>Logout</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ════ Main Content Area ════ -->
+  <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    
+    <!-- Title & Quick Refresh -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div>
+        <h1 class="text-2xl sm:text-3xl font-bold font-headline text-white tracking-tight">System &amp; Leads Management</h1>
+        <p class="text-sm text-outline mt-1">Review, organize, and follow up with all incoming client consultation requests.</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <button id="refresh-btn" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-surface-container-high text-xs font-mono text-on-surface hover:text-primary border border-outline-variant/30 transition-all">
+          <span class="material-symbols-outlined text-[16px]">refresh</span>
+          <span>Refresh Data</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ════ Metric Cards Grid ════ -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      
+      <!-- Total Inquiries -->
+      <div class="p-5 rounded-xl bg-surface-container border border-outline-variant/30 shadow-lg space-y-2">
+        <div class="flex items-center justify-between text-outline">
+          <span class="text-xs font-mono uppercase tracking-wider">Total Leads</span>
+          <span class="material-symbols-outlined text-[20px] text-primary">analytics</span>
+        </div>
+        <div class="text-2xl sm:text-3xl font-bold font-headline text-white" id="stat-total">0</div>
+        <div class="text-xs text-outline font-mono">All recorded requests</div>
+      </div>
+
+      <!-- New Inquiries -->
+      <div class="p-5 rounded-xl bg-surface-container border border-primary-container/40 shadow-lg space-y-2 relative overflow-hidden">
+        <div class="absolute -right-6 -bottom-6 w-20 h-20 bg-primary-container/20 rounded-full blur-xl pointer-events-none"></div>
+        <div class="flex items-center justify-between text-primary">
+          <span class="text-xs font-mono uppercase tracking-wider">New Inquiries</span>
+          <span class="w-2.5 h-2.5 rounded-full bg-secondary-container animate-ping"></span>
+        </div>
+        <div class="text-2xl sm:text-3xl font-bold font-headline text-primary" id="stat-new">0</div>
+        <div class="text-xs text-secondary-container font-mono">Needs initial response</div>
+      </div>
+
+      <!-- In Progress -->
+      <div class="p-5 rounded-xl bg-surface-container border border-outline-variant/30 shadow-lg space-y-2">
+        <div class="flex items-center justify-between text-outline">
+          <span class="text-xs font-mono uppercase tracking-wider">In Progress</span>
+          <span class="material-symbols-outlined text-[20px] text-amber-400">pending_actions</span>
+        </div>
+        <div class="text-2xl sm:text-3xl font-bold font-headline text-amber-300" id="stat-progress">0</div>
+        <div class="text-xs text-outline font-mono">Proposal / Scoping stage</div>
+      </div>
+
+      <!-- Closed Deals -->
+      <div class="p-5 rounded-xl bg-surface-container border border-outline-variant/30 shadow-lg space-y-2">
+        <div class="flex items-center justify-between text-outline">
+          <span class="text-xs font-mono uppercase tracking-wider">Closed / Won</span>
+          <span class="material-symbols-outlined text-[20px] text-emerald-400">check_circle</span>
+        </div>
+        <div class="text-2xl sm:text-3xl font-bold font-headline text-emerald-300" id="stat-closed">0</div>
+        <div class="text-xs text-outline font-mono">Successfully closed</div>
+      </div>
+
+    </div>
+
+    <!-- ════ Filter & Search Toolbar ════ -->
+    <div class="p-4 rounded-xl bg-surface-container border border-outline-variant/30 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+      
+      <!-- Search Bar -->
+      <div class="relative flex-1">
+        <span class="material-symbols-outlined absolute left-3.5 top-2.5 text-[18px] text-outline">search</span>
+        <input type="text" id="search-input" placeholder="Search by client name, email, company, phone, or requirements..."
+          class="w-full pl-10 pr-4 py-2 rounded-lg bg-surface-container-low text-on-surface border border-outline-variant/30 text-sm focus:outline-none focus:border-primary-container font-body placeholder-outline" />
+      </div>
+
+      <!-- Filters -->
+      <div class="flex flex-wrap sm:flex-nowrap items-center gap-2.5">
+        
+        <!-- Status Filter -->
+        <select id="filter-status" class="px-3 py-2 rounded-lg bg-surface-container-low text-on-surface border border-outline-variant/30 text-xs font-mono focus:outline-none focus:border-primary-container">
+          <option value="all">All Statuses</option>
+          <option value="new">New</option>
+          <option value="contacted">Contacted</option>
+          <option value="in_progress">In Progress</option>
+          <option value="closed">Closed</option>
+        </select>
+
+        <!-- Service Filter -->
+        <select id="filter-service" class="px-3 py-2 rounded-lg bg-surface-container-low text-on-surface border border-outline-variant/30 text-xs font-mono focus:outline-none focus:border-primary-container">
+          <option value="all">All Services</option>
+          <option value="custom_software">Custom Software</option>
+          <option value="mobile_app">Mobile Application</option>
+          <option value="pos_mgmt">POS & Systems</option>
+          <option value="web_app">Web Application</option>
+          <option value="integration">System Integration</option>
+          <option value="other">Other</option>
+        </select>
+
+      </div>
+    </div>
+
+    <!-- ════ Leads Table ════ -->
+    <div class="rounded-xl bg-surface-container border border-outline-variant/30 overflow-hidden shadow-xl">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm">
+          <thead class="bg-surface-container-high/60 border-b border-outline-variant/30 text-[11px] font-mono uppercase tracking-wider text-outline">
+            <tr>
+              <th class="py-3 px-4">Client / Company</th>
+              <th class="py-3 px-4">Contact</th>
+              <th class="py-3 px-4">Service &amp; Budget</th>
+              <th class="py-3 px-4">Status</th>
+              <th class="py-3 px-4">Received</th>
+              <th class="py-3 px-4 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="inquiries-tbody" class="divide-y divide-outline-variant/20 font-body">
+            <!-- Rendered dynamically -->
+            <tr>
+              <td colspan="6" class="py-8 text-center text-outline font-mono text-xs">
+                Loading inquiries from database...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ════ Lead Details Modal ════ -->
+  <div id="lead-modal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-surface-container border border-outline-variant/40 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl space-y-6 p-6 sm:p-8">
+      
+      <!-- Modal Header -->
+      <div class="flex items-start justify-between pb-4 border-b border-outline-variant/30">
+        <div>
+          <div class="text-xs font-mono uppercase tracking-widest text-primary flex items-center gap-2">
+            <span id="modal-lead-id">LEAD #000</span>
+            <span id="modal-status-badge" class="px-2 py-0.5 rounded text-[10px] uppercase font-mono">NEW</span>
+          </div>
+          <h2 class="text-xl sm:text-2xl font-bold font-headline text-white mt-1" id="modal-name">Client Name</h2>
+          <p class="text-sm text-outline" id="modal-company">Company</p>
+        </div>
+        <button id="modal-close-btn" class="w-8 h-8 rounded-lg bg-surface-container-high text-outline hover:text-white flex items-center justify-center">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+
+      <!-- Quick Contact Pills -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+        <div class="p-3 rounded-lg bg-surface-container-low border border-outline-variant/20 flex items-center justify-between">
+          <div>
+            <div class="text-[10px] font-mono uppercase text-outline">Email Address</div>
+            <div class="text-white font-medium text-xs break-all" id="modal-email">user@company.com</div>
+          </div>
+          <a id="modal-email-btn" href="#" class="p-2 rounded bg-surface-container hover:bg-primary-container hover:text-white text-primary transition-all">
+            <span class="material-symbols-outlined text-[16px]">mail</span>
+          </a>
+        </div>
+        <div class="p-3 rounded-lg bg-surface-container-low border border-outline-variant/20 flex items-center justify-between">
+          <div>
+            <div class="text-[10px] font-mono uppercase text-outline">Phone / WhatsApp</div>
+            <div class="text-white font-medium text-xs" id="modal-phone">+20 100 000 0000</div>
+          </div>
+          <a id="modal-wa-btn" href="#" target="_blank" class="p-2 rounded bg-surface-container hover:bg-secondary-container hover:text-black text-secondary-container transition-all">
+            <span class="material-symbols-outlined text-[16px]">chat</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Service & Budget Details -->
+      <div class="grid grid-cols-2 gap-3">
+        <div class="p-3 rounded-lg bg-surface-container-low border border-outline-variant/20">
+          <div class="text-[10px] font-mono uppercase text-outline">Requested Service</div>
+          <div class="text-primary font-semibold text-sm mt-0.5" id="modal-service">Custom Software</div>
+        </div>
+        <div class="p-3 rounded-lg bg-surface-container-low border border-outline-variant/20">
+          <div class="text-[10px] font-mono uppercase text-outline">Target Budget</div>
+          <div class="text-secondary-container font-semibold text-sm mt-0.5" id="modal-budget">$5k – $15k</div>
+        </div>
+      </div>
+
+      <!-- Project Requirements Description -->
+      <div class="space-y-2">
+        <div class="text-xs font-mono uppercase tracking-wider text-outline font-semibold">Project Requirements &amp; Description</div>
+        <div class="p-4 rounded-xl bg-surface-container-low border border-outline-variant/30 text-on-surface text-sm leading-relaxed whitespace-pre-wrap font-body" id="modal-details">
+          Description content...
+        </div>
+      </div>
+
+      <!-- Internal Admin Notes -->
+      <div class="space-y-2">
+        <div class="flex items-center justify-between">
+          <label class="text-xs font-mono uppercase tracking-wider text-outline font-semibold">Internal Team Notes</label>
+          <span class="text-[11px] font-mono text-outline">Private to admin</span>
+        </div>
+        <textarea id="modal-notes" rows="3" placeholder="Write any internal follow-up notes, call outcomes, or client quotes here..."
+          class="w-full p-3 rounded-lg bg-surface-container-low border border-outline-variant/30 text-on-surface text-sm focus:outline-none focus:border-primary-container font-body"></textarea>
+      </div>
+
+      <!-- Status Updater & Save Actions -->
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 pt-4 border-t border-outline-variant/30">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-mono uppercase text-outline">Update Status:</span>
+          <select id="modal-status-select" class="px-3 py-1.5 rounded-lg bg-surface-container-low text-xs font-mono border border-outline-variant/40 focus:outline-none">
+            <option value="new">New</option>
+            <option value="contacted">Contacted</option>
+            <option value="in_progress">In Progress</option>
+            <option value="closed">Closed</option>
+          </select>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button id="modal-save-btn" class="px-5 py-2 rounded-lg bg-primary-container text-white text-xs font-headline font-semibold hover:bg-blue-600 transition-all flex items-center gap-1.5 shadow-[0_0_12px_rgba(0,82,255,0.4)]">
+            <span class="material-symbols-outlined text-[16px]">save</span>
+            <span>Save Changes</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ════ Client App JavaScript ════ -->
+  <script>
+    let currentInquiries = [];
+    let activeModalLeadId = null;
+
+    const tbody = document.getElementById('inquiries-tbody');
+    const searchInput = document.getElementById('search-input');
+    const filterStatus = document.getElementById('filter-status');
+    const filterService = document.getElementById('filter-service');
+    const refreshBtn = document.getElementById('refresh-btn');
+    const logoutBtn = document.getElementById('logout-btn');
+
+    // Format service labels
+    const serviceLabels = {
+      'custom_software': 'Custom Software',
+      'mobile_app': 'Mobile App',
+      'pos_mgmt': 'POS & Systems',
+      'web_app': 'Web Platform',
+      'integration': 'Integration',
+      'other': 'Other Inquiry'
+    };
+
+    // Format budget labels
+    const budgetLabels = {
+      'not_decided': 'Not decided',
+      'sub1k': '< $1,000',
+      '1k-5k': '$1k – $5k',
+      '5k-15k': '$5k – $15k',
+      '15k_plus': '$15,000+'
+    };
+
+    // Format relative time
+    function formatDate(isoStr) {
+      if (!isoStr) return '—';
+      const d = new Date(isoStr);
+      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+    }
+
+    // Clean phone number for WhatsApp link
+    function cleanPhone(phone) {
+      if (!phone) return '';
+      return phone.replace(/[^0-9]/g, '');
+    }
+
+    // Fetch Stats
+    async function loadStats() {
+      try {
+        const res = await fetch('/admin/api/stats');
+        const data = await res.json();
+        if (data.success && data.stats) {
+          document.getElementById('stat-total').textContent = data.stats.total;
+          document.getElementById('stat-new').textContent = data.stats.newCount;
+          document.getElementById('stat-progress').textContent = data.stats.inProgressCount;
+          document.getElementById('stat-closed').textContent = data.stats.closedCount;
+        }
+      } catch (err) {
+        console.error('Error fetching stats:', err);
+      }
+    }
+
+    // Fetch Inquiries
+    async function loadInquiries() {
+      const q = searchInput.value;
+      const status = filterStatus.value;
+      const service = filterService.value;
+
+      const params = new URLSearchParams();
+      if (q) params.set('search', q);
+      if (status !== 'all') params.set('status', status);
+      if (service !== 'all') params.set('service', service);
+
+      try {
+        const res = await fetch('/admin/api/inquiries?' + params.toString());
+        const data = await res.json();
+
+        if (data.success) {
+          currentInquiries = data.inquiries || [];
+          renderTable(currentInquiries);
+        }
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-red-400 font-mono text-xs">Failed to load data from server.</td></tr>`;
+      }
+    }
+
+    // Render Table Rows
+    function renderTable(items) {
+      if (!items || items.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" class="py-12 text-center text-outline font-mono text-xs">
+              <span class="material-symbols-outlined text-[32px] block mb-2 opacity-50">inbox</span>
+              No consultation inquiries match the current search or filters.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = items.map(item => {
+        const waNumber = cleanPhone(item.phone);
+        const statusClass = `status-badge-${item.status}`;
+        const statusLabel = (item.status || 'new').replace('_', ' ').toUpperCase();
+
+        return `
+          <tr class="hover:bg-surface-container-high/40 transition-colors">
+            
+            <!-- Client / Company -->
+            <td class="py-3.5 px-4">
+              <div class="font-semibold text-white">${escapeHtml(item.name || 'Anonymous')}</div>
+              <div class="text-xs text-outline font-mono">${escapeHtml(item.company || 'Direct Founder')}</div>
+            </td>
+
+            <!-- Contact Details -->
+            <td class="py-3.5 px-4">
+              <div class="text-xs text-on-surface">${escapeHtml(item.email || '—')}</div>
+              <div class="text-xs text-outline font-mono">${escapeHtml(item.phone || '—')}</div>
+            </td>
+
+            <!-- Service & Budget -->
+            <td class="py-3.5 px-4">
+              <span class="px-2 py-0.5 rounded bg-surface-container-low border border-outline-variant/30 text-xs text-primary font-mono">
+                ${serviceLabels[item.service] || item.service}
+              </span>
+              <div class="text-[11px] text-outline mt-1 font-mono">${budgetLabels[item.budget] || item.budget}</div>
+            </td>
+
+            <!-- Status Dropdown -->
+            <td class="py-3.5 px-4">
+              <select onchange="updateLeadStatus('${item.id}', this.value)"
+                class="px-2.5 py-1 rounded-full text-xs font-mono font-medium ${statusClass} focus:outline-none cursor-pointer">
+                <option value="new" ${item.status === 'new' ? 'selected' : ''}>NEW</option>
+                <option value="contacted" ${item.status === 'contacted' ? 'selected' : ''}>CONTACTED</option>
+                <option value="in_progress" ${item.status === 'in_progress' ? 'selected' : ''}>IN PROGRESS</option>
+                <option value="closed" ${item.status === 'closed' ? 'selected' : ''}>CLOSED</option>
+              </select>
+            </td>
+
+            <!-- Date -->
+            <td class="py-3.5 px-4 text-xs font-mono text-outline whitespace-nowrap">
+              ${formatDate(item.createdAt)}
+            </td>
+
+            <!-- Actions -->
+            <td class="py-3.5 px-4 text-right whitespace-nowrap">
+              <div class="flex items-center justify-end gap-1.5">
+                
+                <!-- Open WhatsApp -->
+                ${waNumber ? `
+                  <a href="https://wa.me/${waNumber}" target="_blank" title="Chat on WhatsApp"
+                    class="p-1.5 rounded-lg bg-surface-container-high hover:bg-secondary-container hover:text-black text-secondary-container transition-all">
+                    <span class="material-symbols-outlined text-[16px]">chat</span>
+                  </a>
+                ` : ''}
+
+                <!-- Open Email -->
+                <a href="mailto:${item.email}" title="Send Email"
+                  class="p-1.5 rounded-lg bg-surface-container-high hover:bg-primary-container hover:text-white text-primary transition-all">
+                  <span class="material-symbols-outlined text-[16px]">mail</span>
+                </a>
+
+                <!-- View Modal -->
+                <button onclick="openLeadModal('${item.id}')" title="View Full Details"
+                  class="p-1.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-white transition-all">
+                  <span class="material-symbols-outlined text-[16px]">visibility</span>
+                </button>
+
+                <!-- Delete Lead -->
+                <button onclick="deleteLead('${item.id}')" title="Delete Inquiry"
+                  class="p-1.5 rounded-lg bg-surface-container-high hover:bg-error-container hover:text-white text-outline transition-all">
+                  <span class="material-symbols-outlined text-[16px]">delete</span>
+                </button>
+
+              </div>
+            </td>
+
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    // Update Status from Dropdown
+    async function updateLeadStatus(id, newStatus) {
+      try {
+        const res = await fetch(`/admin/api/inquiries/${id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: newStatus })
+        });
+        const data = await res.json();
+        if (data.success) {
+          loadStats();
+          loadInquiries();
+        }
+      } catch (err) {
+        alert('Failed to update status.');
+      }
+    }
+
+    // Delete Lead
+    async function deleteLead(id) {
+      if (!confirm('Are you sure you want to permanently delete this lead inquiry?')) {
+        return;
+      }
+      try {
+        const res = await fetch(`/admin/api/inquiries/${id}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (data.success) {
+          loadStats();
+          loadInquiries();
+        }
+      } catch (err) {
+        alert('Failed to delete inquiry.');
+      }
+    }
+
+    // Modal Handling
+    const modal = document.getElementById('lead-modal');
+    const modalCloseBtn = document.getElementById('modal-close-btn');
+    const modalSaveBtn = document.getElementById('modal-save-btn');
+
+    function openLeadModal(id) {
+      const item = currentInquiries.find(i => i.id === id);
+      if (!item) return;
+
+      activeModalLeadId = id;
+      document.getElementById('modal-lead-id').textContent = item.id;
+      document.getElementById('modal-name').textContent = item.name || 'Unnamed';
+      document.getElementById('modal-company').textContent = item.company || 'Company not specified';
+      document.getElementById('modal-email').textContent = item.email || '—';
+      document.getElementById('modal-phone').textContent = item.phone || '—';
+      document.getElementById('modal-service').textContent = serviceLabels[item.service] || item.service;
+      document.getElementById('modal-budget').textContent = budgetLabels[item.budget] || item.budget;
+      document.getElementById('modal-details').textContent = item.details || 'No details provided.';
+      document.getElementById('modal-notes').value = item.notes || '';
+      document.getElementById('modal-status-select').value = item.status || 'new';
+
+      const waClean = cleanPhone(item.phone);
+      document.getElementById('modal-wa-btn').href = waClean ? `https://wa.me/${waClean}` : '#';
+      document.getElementById('modal-email-btn').href = `mailto:${item.email}`;
+
+      const badge = document.getElementById('modal-status-badge');
+      badge.className = `px-2 py-0.5 rounded text-[10px] uppercase font-mono status-badge-${item.status}`;
+      badge.textContent = (item.status || 'new').toUpperCase();
+
+      modal.classList.remove('hidden');
+    }
+
+    modalCloseBtn.addEventListener('click', () => modal.classList.add('hidden'));
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) modal.classList.add('hidden');
+    });
+
+    modalSaveBtn.addEventListener('click', async () => {
+      if (!activeModalLeadId) return;
+      const status = document.getElementById('modal-status-select').value;
+      const notes = document.getElementById('modal-notes').value.trim();
+
+      modalSaveBtn.disabled = true;
+      modalSaveBtn.innerHTML = `<span>Saving...</span>`;
+
+      try {
+        const res = await fetch(`/admin/api/inquiries/${activeModalLeadId}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status, notes })
+        });
+        const data = await res.json();
+        if (data.success) {
+          modal.classList.add('hidden');
+          loadStats();
+          loadInquiries();
+        }
+      } catch (err) {
+        alert('Failed to save changes.');
+      } finally {
+        modalSaveBtn.disabled = false;
+        modalSaveBtn.innerHTML = `<span class="material-symbols-outlined text-[16px]">save</span><span>Save Changes</span>`;
+      }
+    });
+
+    // Toolbar Event Listeners
+    let debounceTimer;
+    searchInput.addEventListener('input', () => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(loadInquiries, 250);
+    });
+
+    filterStatus.addEventListener('change', loadInquiries);
+    filterService.addEventListener('change', loadInquiries);
+    refreshBtn.addEventListener('click', () => {
+      loadStats();
+      loadInquiries();
+    });
+
+    // Logout
+    logoutBtn.addEventListener('click', async () => {
+      await fetch('/admin/api/logout', { method: 'POST' });
+      window.location.href = '/admin/login';
+    });
+
+    // Initial load
+    loadStats();
+    loadInquiries();
+  </script>
+</body>
+</html>

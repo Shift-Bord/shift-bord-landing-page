@@ -1,0 +1,104 @@
+/* =====================================================================
+   Shift Bord – Custom CSS  (supplements Tailwind CDN)
+   ===================================================================== */
+
+/* ── Smooth scroll ──────────────────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ── Scrollbar hidden globally ──────────────────────────────────────── */
+::-webkit-scrollbar { display: none; }
+* { scrollbar-width: none; }
+
+/* ── Custom selection colour ────────────────────────────────────────── */
+::selection {
+  background: #0052ff;
+  color: #dfe3ff;
+}
+
+/* ── Fade-in animation for sections ────────────────────────────────── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.65s ease both;
+}
+
+/* ── Hero telemetry chart pulse ─────────────────────────────────────── */
+@keyframes chartPulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+.chart-line {
+  stroke-dasharray: 600;
+  stroke-dashoffset: 600;
+  animation: drawLine 2.4s ease forwards, chartPulse 3s ease infinite 2.4s;
+}
+
+@keyframes drawLine {
+  to { stroke-dashoffset: 0; }
+}
+
+/* ── Nav active indicator ───────────────────────────────────────────── */
+nav a.active {
+  color: #b7c4ff !important;
+  font-weight: 700 !important;
+}
+
+/* ── Mobile menu ────────────────────────────────────────────────────── */
+#mobile-menu {
+  transition: max-height 0.35s ease, opacity 0.3s ease;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+}
+
+#mobile-menu.open {
+  max-height: 480px;
+  opacity: 1;
+}
+
+/* ── FAQ transition ─────────────────────────────────────────────────── */
+.faq-content {
+  transition: max-height 0.3s ease, opacity 0.25s ease;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+}
+
+.faq-content.open {
+  max-height: 300px;
+  opacity: 1;
+}
+
+/* ── Form feedback banner ───────────────────────────────────────────── */
+#form-success-banner,
+#form-error-banner {
+  transition: opacity 0.3s ease;
+}
+
+/* ── Glow button pulse on hover ─────────────────────────────────────── */
+.btn-primary {
+  box-shadow: 0 0 0 0 rgba(0, 82, 255, 0.4);
+  transition: box-shadow 0.3s ease, background-color 0.2s ease, color 0.2s ease;
+}
+
+.btn-primary:hover {
+  box-shadow: 0 0 24px 6px rgba(0, 82, 255, 0.5);
+}
+
+/* ── Back to top button ─────────────────────────────────────────────── */
+#back-to-top {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+#back-to-top.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
