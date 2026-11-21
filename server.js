@@ -17,6 +17,7 @@ app.use(cookieParser());
 
 // Serve static assets (CSS, JS, images)
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/public', express.static(path.join(__dirname, 'public')));
 
 // ─── View Engine ─────────────────────────────────────────────────────────────
 app.set('views', path.join(__dirname, 'views'));
