@@ -11,6 +11,19 @@
   <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
   <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,300..900;1,300..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet"/>
   
+  <!-- Anti-FOUC immediate theme script -->
+  <script>
+    (function() {
+      const saved = localStorage.getItem('shiftbord_theme');
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (saved === 'light' || (!saved && !prefersDark)) {
+        document.documentElement.classList.remove('dark');
+      } else {
+        document.documentElement.classList.add('dark');
+      }
+    })();
+  </script>
+
   <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -19,22 +32,22 @@
       theme: {
         extend: {
           colors: {
-            "primary": "#b7c4ff",
-            "outline": "#8d90a2",
-            "primary-container": "#0052ff",
-            "surface-bright": "#353942",
-            "error-container": "#93000a",
-            "surface-tint": "#b7c4ff",
-            "surface-container-low": "#181c24",
-            "surface": "#0f131c",
-            "secondary-container": "#00eefc",
-            "surface-container-high": "#262a33",
-            "surface-container": "#1c2028",
-            "on-background": "#dfe2ee",
-            "surface-container-highest": "#31353e",
-            "on-surface": "#dfe2ee",
-            "surface-container-lowest": "#0a0e16",
-            "outline-variant": "#434656"
+            "primary": "rgb(var(--rgb-primary) / <alpha-value>)",
+            "outline": "rgb(var(--rgb-outline) / <alpha-value>)",
+            "primary-container": "rgb(var(--rgb-primary-container) / <alpha-value>)",
+            "surface-bright": "rgb(var(--rgb-surface-bright) / <alpha-value>)",
+            "error-container": "rgb(var(--rgb-error-container) / <alpha-value>)",
+            "surface-tint": "rgb(var(--rgb-surface-tint) / <alpha-value>)",
+            "surface-container-low": "rgb(var(--rgb-surface-container-low) / <alpha-value>)",
+            "surface": "rgb(var(--rgb-surface) / <alpha-value>)",
+            "secondary-container": "rgb(var(--rgb-secondary-container) / <alpha-value>)",
+            "surface-container-high": "rgb(var(--rgb-surface-container-high) / <alpha-value>)",
+            "surface-container": "rgb(var(--rgb-surface-container) / <alpha-value>)",
+            "on-background": "rgb(var(--rgb-on-background) / <alpha-value>)",
+            "surface-container-highest": "rgb(var(--rgb-surface-container-highest) / <alpha-value>)",
+            "on-surface": "rgb(var(--rgb-on-surface) / <alpha-value>)",
+            "surface-container-lowest": "rgb(var(--rgb-surface-container-lowest) / <alpha-value>)",
+            "outline-variant": "rgb(var(--rgb-outline-variant) / <alpha-value>)"
           },
           fontFamily: {
             body: ["Hanken Grotesk"],
@@ -45,6 +58,7 @@
       }
     };
   </script>
+  <link rel="stylesheet" href="/css/style.css"/>
   <style>
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: #0f131c; }
@@ -84,6 +98,11 @@
 
       <!-- Action buttons -->
       <div class="flex items-center gap-3">
+        <!-- Theme Toggle Button -->
+        <button id="admin-theme-toggle" class="theme-toggle-btn inline-flex items-center justify-center w-8 h-8 rounded-lg bg-surface-container-high border border-outline-variant/30 text-on-surface hover:text-primary transition-all" aria-label="Toggle Theme" title="Toggle Theme">
+          <span class="material-symbols-outlined text-[18px]">light_mode</span>
+        </button>
+
         <!-- Export Button -->
         <a href="/admin/api/export" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container-high border border-outline-variant/30 text-xs font-mono text-on-surface hover:text-primary hover:border-primary/50 transition-all">
           <span class="material-symbols-outlined text-[16px]">download</span>
@@ -635,6 +654,33 @@
       await fetch('/admin/api/logout', { method: 'POST' });
       window.location.href = '/admin/login';
     });
+
+    // Admin Theme Toggle Controller
+    const adminThemeBtn = document.getElementById('admin-theme-toggle');
+    if (adminThemeBtn) {
+      function syncAdminThemeUI(isDark) {
+        const icon = adminThemeBtn.querySelector('.material-symbols-outlined');
+        if (icon) {
+          icon.textContent = isDark ? 'light_mode' : 'dark_mode';
+          icon.style.transform = isDark ? 'rotate(0deg)' : 'rotate(180deg)';
+        }
+        adminThemeBtn.setAttribute('title', isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode');
+      }
+      syncAdminThemeUI(document.documentElement.classList.contains('dark'));
+
+      adminThemeBtn.addEventListener('click', () => {
+        const isDark = document.documentElement.classList.contains('dark');
+        if (isDark) {
+          document.documentElement.classList.remove('dark');
+          localStorage.setItem('shiftbord_theme', 'light');
+          syncAdminThemeUI(false);
+        } else {
+          document.documentElement.classList.add('dark');
+          localStorage.setItem('shiftbord_theme', 'dark');
+          syncAdminThemeUI(true);
+        }
+      });
+    }
 
     // Initial load
     loadStats();

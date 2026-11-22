@@ -1,6 +1,124 @@
 /* =====================================================================
-   Shift Bord – Custom CSS  (supplements Tailwind CDN)
+   Shift Bord – Custom CSS & Theming Tokens
    ===================================================================== */
+
+/* ── Color Theme Tokens (RGB triplets for Tailwind opacity support) ── */
+:root {
+  /* ☀️ LIGHT THEME ☀️ */
+  --rgb-surface: 248 250 252;
+  --rgb-surface-dim: 241 245 249;
+  --rgb-surface-bright: 255 255 255;
+  --rgb-surface-container: 255 255 255;
+  --rgb-surface-container-low: 248 250 252;
+  --rgb-surface-container-high: 241 245 249;
+  --rgb-surface-container-highest: 226 232 240;
+  --rgb-surface-container-lowest: 255 255 255;
+  --rgb-surface-variant: 226 232 240;
+  --rgb-on-surface: 15 23 42;
+  --rgb-on-surface-variant: 51 65 85;
+  --rgb-outline: 100 116 139;
+  --rgb-outline-variant: 203 213 225;
+  --rgb-background: 248 250 252;
+  --rgb-on-background: 15 23 42;
+
+  --rgb-primary: 0 82 255;
+  --rgb-primary-container: 0 82 255;
+  --rgb-on-primary: 255 255 255;
+  --rgb-on-primary-container: 255 255 255;
+  --rgb-primary-fixed: 0 64 204;
+  --rgb-primary-fixed-dim: 37 99 235;
+  --rgb-on-primary-fixed: 255 255 255;
+  --rgb-on-primary-fixed-variant: 255 255 255;
+  --rgb-surface-tint: 0 82 255;
+  --rgb-inverse-primary: 0 76 237;
+
+  --rgb-secondary: 2 132 199;
+  --rgb-secondary-container: 0 140 158;
+  --rgb-on-secondary: 255 255 255;
+  --rgb-on-secondary-container: 255 255 255;
+  --rgb-secondary-fixed: 2 132 199;
+  --rgb-secondary-fixed-dim: 14 165 233;
+  --rgb-on-secondary-fixed: 255 255 255;
+  --rgb-on-secondary-fixed-variant: 255 255 255;
+
+  --rgb-tertiary: 79 70 229;
+  --rgb-tertiary-container: 67 56 202;
+  --rgb-on-tertiary: 255 255 255;
+  --rgb-on-tertiary-container: 255 255 255;
+  --rgb-tertiary-fixed: 99 102 241;
+  --rgb-tertiary-fixed-dim: 79 70 229;
+  --rgb-on-tertiary-fixed: 255 255 255;
+  --rgb-on-tertiary-fixed-variant: 255 255 255;
+
+  --rgb-error: 220 38 38;
+  --rgb-error-container: 254 226 226;
+  --rgb-on-error: 255 255 255;
+  --rgb-on-error-container: 153 27 27;
+
+  --rgb-inverse-surface: 15 23 42;
+  --rgb-inverse-on-surface: 248 250 252;
+}
+
+html.dark {
+  /* 🌙 DARK THEME 🌙 */
+  --rgb-surface: 15 19 28;
+  --rgb-surface-dim: 15 19 28;
+  --rgb-surface-bright: 53 57 66;
+  --rgb-surface-container: 28 32 40;
+  --rgb-surface-container-low: 24 28 36;
+  --rgb-surface-container-high: 38 42 51;
+  --rgb-surface-container-highest: 49 53 62;
+  --rgb-surface-container-lowest: 10 14 22;
+  --rgb-surface-variant: 49 53 62;
+  --rgb-on-surface: 223 226 238;
+  --rgb-on-surface-variant: 195 197 217;
+  --rgb-outline: 141 144 162;
+  --rgb-outline-variant: 67 70 86;
+  --rgb-background: 15 19 28;
+  --rgb-on-background: 223 226 238;
+
+  --rgb-primary: 183 196 255;
+  --rgb-primary-container: 0 82 255;
+  --rgb-on-primary: 0 38 130;
+  --rgb-on-primary-container: 223 227 255;
+  --rgb-primary-fixed: 221 225 255;
+  --rgb-primary-fixed-dim: 183 196 255;
+  --rgb-on-primary-fixed: 0 20 82;
+  --rgb-on-primary-fixed-variant: 0 56 182;
+  --rgb-surface-tint: 183 196 255;
+  --rgb-inverse-primary: 0 76 237;
+
+  --rgb-secondary: 211 251 255;
+  --rgb-secondary-container: 0 238 252;
+  --rgb-on-secondary: 0 54 58;
+  --rgb-on-secondary-container: 0 104 111;
+  --rgb-secondary-fixed: 125 244 255;
+  --rgb-secondary-fixed-dim: 0 219 233;
+  --rgb-on-secondary-fixed: 0 32 34;
+  --rgb-on-secondary-fixed-variant: 0 79 84;
+
+  --rgb-tertiary: 192 193 255;
+  --rgb-tertiary-container: 81 83 222;
+  --rgb-on-tertiary: 16 0 169;
+  --rgb-on-tertiary-container: 227 226 255;
+  --rgb-tertiary-fixed: 225 224 255;
+  --rgb-tertiary-fixed-dim: 192 193 255;
+  --rgb-on-tertiary-fixed: 7 0 108;
+  --rgb-on-tertiary-fixed-variant: 47 46 190;
+
+  --rgb-error: 255 180 171;
+  --rgb-error-container: 147 0 10;
+  --rgb-on-error: 105 0 5;
+  --rgb-on-error-container: 255 218 214;
+
+  --rgb-inverse-surface: 223 226 238;
+  --rgb-inverse-on-surface: 44 48 57;
+}
+
+/* ── Smooth Theme Transitions ───────────────────────────────────────── */
+body, header, section, footer, div, a, button, input, textarea, select {
+  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+}
 
 /* ── Smooth scroll ──────────────────────────────────────────────────── */
 html {
@@ -45,7 +163,7 @@ html {
 
 /* ── Nav active indicator ───────────────────────────────────────────── */
 nav a.active {
-  color: #b7c4ff !important;
+  color: rgb(var(--rgb-primary)) !important;
   font-weight: 700 !important;
 }
 
@@ -101,4 +219,14 @@ nav a.active {
 #back-to-top.visible {
   opacity: 1;
   pointer-events: auto;
+}
+
+/* ── Theme Toggle Button Styling ────────────────────────────────────── */
+.theme-toggle-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.theme-toggle-btn .material-symbols-outlined {
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }

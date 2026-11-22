@@ -1,6 +1,56 @@
 /* =====================================================================
-   Shift Bord – Client-side JavaScript
+   Shift Bord – Client-side JavaScript & Theme Controller
    ===================================================================== */
+
+/* ── 0. Theme initialization & toggle ───────────────────────────────── */
+function initTheme() {
+  const saved = localStorage.getItem('shiftbord_theme');
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const isDark = saved ? saved === 'dark' : prefersDark;
+
+  applyTheme(isDark ? 'dark' : 'light');
+
+  // Bind all theme toggle buttons across the page
+  document.querySelectorAll('.theme-toggle-btn, #theme-toggle-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const currentDark = document.documentElement.classList.contains('dark');
+      applyTheme(currentDark ? 'light' : 'dark');
+    });
+  });
+
+  // Listen to OS system preference changes if user hasn't overridden
+  if (window.matchMedia) {
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+      if (!localStorage.getItem('shiftbord_theme')) {
+        applyTheme(e.matches ? 'dark' : 'light');
+      }
+    });
+  }
+}
+
+function applyTheme(theme) {
+  const isDark = theme === 'dark';
+  if (isDark) {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+  }
+
+  localStorage.setItem('shiftbord_theme', theme);
+
+  // Update icons and tooltips on all toggle buttons
+  document.querySelectorAll('.theme-toggle-btn, #theme-toggle-btn').forEach((btn) => {
+    const icon = btn.querySelector('.material-symbols-outlined');
+    if (icon) {
+      icon.textContent = isDark ? 'light_mode' : 'dark_mode';
+      icon.style.transform = isDark ? 'rotate(0deg)' : 'rotate(180deg)';
+    }
+    btn.setAttribute('title', isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode');
+  });
+}
+
+// Run immediately
+initTheme();
 
 /* ── 1. Mobile menu toggle ──────────────────────────────────────────── */
 const menuBtn  = document.getElementById('menu-btn');
@@ -9,7 +59,6 @@ const mobileMenu = document.getElementById('mobile-menu');
 if (menuBtn && mobileMenu) {
   menuBtn.addEventListener('click', () => {
     mobileMenu.classList.toggle('open');
-    // Toggle icon
     const icon = menuBtn.querySelector('.material-symbols-outlined');
     if (icon) icon.textContent = mobileMenu.classList.contains('open') ? 'close' : 'menu';
   });
